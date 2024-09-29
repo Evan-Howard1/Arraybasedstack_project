@@ -1,0 +1,33 @@
+// project_1's testing program
+
+package Homework_before_test1;
+
+public class Project_1_Tester {
+
+	public static void main(String args[]) {
+		
+		StackInterface3<Integer> stack = new Project_1<Integer>();
+		stack.push(40, 2);
+		stack.push(41, 2);
+		stack.push(43, 2);
+		stack.push(43, 2);
+		stack.push(44, 2);
+		stack.push(46, 2);
+		
+		stack.push(63, 1);
+		
+		
+		stack.push(59, 3);
+		stack.push(51, 3);
+		stack.push(52, 3);
+		stack.push(49, 3);
+		stack.push(48, 3);
+		stack.push(47, 3);
+		stack.push(90, 3);
+		
+		System.out.println(stack.top(1));
+		System.out.println(stack.top(2));
+		System.out.println(stack.top(3));
+		
+	}
+}
