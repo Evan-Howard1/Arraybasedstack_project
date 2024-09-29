@@ -1,0 +1,211 @@
+/* Evan Howard
+ * CIS 221 -- Project 1
+ * The program implements three stacks on one array. All of the basic stack operations can be performed and the program
+ * will resize the stacks depending on which stack is used and which stacks are full
+ * “I did not copy code from other people or sources other than our CIS-221 textbook.
+ *  I did not use any AI software to help write code.”
+ */
+
+
+package Homework_before_test1;
+
+//Array Bounded Stack
+
+public class Project_1<T> implements StackInterface3<T> 
+{
+protected final int DEFCAP = 18;  // default capacity, must be a number divisible by 3
+protected T[] elements;           // holds stack elements
+
+
+protected int[] boundaries = new int[3];
+private int stack1top = -1;					//topindexes of every stack
+private int stack2top = (DEFCAP*1/3) -1;
+private int stack3top = (DEFCAP*2/3) -1;
+
+
+
+public Project_1() {             // creates array of default size
+ elements = (T[]) new Object[DEFCAP];
+
+ boundaries[0] = 0;			 // stack 1's start = boundaries[0]
+ boundaries[1] = DEFCAP*1/3; // stack 2's start = boundaries[1]
+ boundaries[2] = DEFCAP*2/3; // stack 3's start = boundaries[2]
+}
+
+public void push(T element, int numStack) {   
+	
+	if (isFull(numStack)) {
+		  throw new StackOverflowException("Push attempted while the array is full");}
+	if(spaceCheck(numStack) == false) {
+		resize(numStack);
+	}
+	
+	if(numStack == 1) {
+		stack1top++; 
+		elements[stack1top] = element;
+	}
+	if(numStack == 2) {
+		stack2top++; 
+		elements[stack2top] = element;
+	}
+	if(numStack == 3) {
+		stack3top++; 
+		elements[stack3top] = element;
+	}
+}
+
+public void pop(int numStack) {  
+	
+	if (isEmpty(numStack)) {
+		throw new StackUnderflowException("Pop attempted on an empty stack.");}
+	
+	if (numStack == 1) { 
+		elements[stack1top] = null;
+		stack1top--;
+	}
+	if (numStack == 2) {
+		elements[stack2top] = null;
+		stack2top--; 
+	}
+	if (numStack == 3) {
+		elements[stack3top] = null;
+		stack3top--; 
+	}
+
+}
+
+public T top(int numStack) {   
+	
+	T topOfStack = null;
+	 if (isEmpty(numStack))
+	   throw new StackUnderflowException("Top attempted on an empty stack.");
+	 if(numStack == 1) {
+			 topOfStack = elements[stack1top];
+		 }
+	 if(numStack == 2) {
+			 topOfStack = elements[stack2top];
+		 }
+	 if(numStack == 3) {
+			 topOfStack = elements[stack3top];
+		 }
+	return topOfStack;
+}
+
+public boolean isEmpty(int numStack) { 
+	boolean emptycheck = false;
+	if (numStack == 1) {
+		emptycheck = stack1top == ((boundaries[0]) - 1);
+	}
+	if (numStack == 2) {
+		emptycheck = stack2top == ((boundaries[1]) - 1);
+	}
+	if (numStack == 3) {
+		emptycheck = stack3top == ((boundaries[2]) - 1);
+	} 
+	return emptycheck;
+}
+
+public boolean isFull(int numStack) {  // no stack is full unless elements is full so it does not matter which stack
+	for(int i = 0; i<DEFCAP; i++) {    // they perform isFull on
+		if(elements[i] == null) {
+			return false;
+		}
+	}
+	return true;
+}
+
+private void resize(int numStack) {				// handles the calling of the methods that do the resizing
+	if (numStack == 1) {						// private because its only used in this class
+		
+		if(spaceCheck(2)) {
+			push2Up();
+		}
+		else {
+			push3Up();
+			resize(1);
+		}
+	}
+	if(numStack == 2) {
+		if(spaceCheck(1)) {
+			push2Down();
+		}
+		else {
+			push3Up();
+		}
+	}
+	if(numStack == 3) {
+		if (spaceCheck(2)) {	
+			push3Down();
+		}
+		else {
+			push2Down();
+			resize(3);
+		}
+	}										
+}
+
+private void push2Up() {								//the push up and down methods are private since they are only used
+	for (int i=stack2top; i>= boundaries[1]; i-- ) {	//within this class
+		elements[i+1]= elements[i];
+	}
+	boundaries[1] = boundaries[1]+1;
+	stack2top = stack2top+1;
+}
+
+
+private void push3Down() {
+	for (int i=boundaries[2]; i<= stack3top; i++ ) {
+		elements[i-1]= elements[i];
+	}
+	boundaries[2] = boundaries[2]-1;
+	stack3top = stack3top-1;
+}
+
+
+private void push2Down() {
+	for (int i=boundaries[1]; i<= stack2top; i++ ) {
+		elements[i-1]= elements[i];
+	}
+	boundaries[1] = boundaries[1]-1;
+	stack2top = stack2top-1;
+}
+
+
+
+private void push3Up() {								
+	for (int i=stack3top; i>= boundaries[2]; i-- ) {	
+		elements[i+1]= elements[i];						
+	}
+	boundaries[2] = boundaries[2]+1;
+	stack3top = stack3top+1;
+}
+
+											
+											
+private boolean spaceCheck(int numStack) {	
+	boolean spaceAvail = true;				
+	if(numStack == 1) {
+		if(stack1top+1 == boundaries[1]) {spaceAvail = false;}
+	}
+	if(numStack == 2) {
+		if(stack2top+1 == boundaries[2]) {spaceAvail = false;}
+	}
+	if(numStack == 3) {
+		if(stack3top+1 == DEFCAP) {spaceAvail = false;}
+	}
+	return spaceAvail;					// true means there is space
+}
+
+public void emptyStack(int numStack) {
+	if (numStack == 1) {
+		stack1top = -1;
+	}
+	if (numStack == 2) {
+		stack2top = boundaries[1]-1; 
+	}
+	if (numStack == 3) {
+		stack3top = boundaries[2]-1;
+	}
+}
+
+}
